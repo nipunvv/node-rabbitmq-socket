@@ -37,6 +37,13 @@ services:
       - '3010'
     networks:
       - rabbitmq_nodejs
+  api:
+    build: .
+    command: ['node', 'server.js']
+    ports:
+      - "8080:8080"
+    expose:
+      - "8080"
 networks:
   rabbitmq_nodejs:
     driver: bridge

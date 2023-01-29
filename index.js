@@ -18,6 +18,10 @@ io.on("connection", (socket) => {
 
   socket.on("chat_message", (msg) => {
     console.log("message: " + msg);
+    socket.emit(
+      "chat_message",
+      "Sorry at the moment. We are still building the system. Kindly wait.."
+    );
   });
 });
 
