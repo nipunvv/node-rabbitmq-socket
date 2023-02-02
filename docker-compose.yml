@@ -37,13 +37,27 @@ services:
       - '3010'
     networks:
       - rabbitmq_nodejs
+  mongodb:
+    image: mongo:5.0.2
+    restart: unless-stopped
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=123456
+    ports:
+      - 7017:27017
+    volumes:
+      - db:/data/db
   api:
+    depends_on:
+      - mongodb
     build: .
     command: ['node', 'server.js']
     ports:
-      - "8080:8080"
-    expose:
-      - "8080"
+      - 6868:8080
+    stdin_open: true
+    tty: true
 networks:
   rabbitmq_nodejs:
     driver: bridge
+volumes:
+  db:
