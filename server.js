@@ -7,7 +7,7 @@ mongoose.Promise = global.Promise;
 const app = express();
 
 var corsOptions = {
-  origin: "http://localhost:8081"
+  origin: "http://localhost:3000",
 };
 
 app.use(cors(corsOptions));
@@ -16,17 +16,20 @@ app.use(express.json());
 
 app.use(express.urlencoded({ extended: true }));
 
-const url = `mongodb://root:123456@mongodb:27017/messaging_db?authSource=admin`
+const db = require("./models");
+const dbConfig = require("./config/db.config");
 
-mongoose
+const url = `mongodb://${dbConfig.DB_USER}:${dbConfig.DB_PASSWORD}@${dbConfig.DB_HOST}:${dbConfig.DB_PORT}/${dbConfig.DB_NAME}?authSource=admin`;
+
+db.mongoose
   .connect(url, {
     useNewUrlParser: true,
-    useUnifiedTopology: true
+    useUnifiedTopology: true,
   })
   .then(() => {
     console.log("Connected to the database!");
   })
-  .catch(err => {
+  .catch((err) => {
     console.log("Cannot connect to the database!", err);
     process.exit();
   });
