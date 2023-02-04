@@ -1,7 +1,6 @@
 const config = require("../config/auth.config");
 const db = require("../models");
 const User = db.user;
-const Role = db.role;
 
 var jwt = require("jsonwebtoken");
 var bcrypt = require("bcryptjs");
@@ -19,7 +18,7 @@ exports.signup = (req, res) => {
       return;
     }
 
-    res.send({ message: "User was registered successfully!" });
+    res.send({ message: "User registered successfully!" });
   });
 };
 
@@ -33,7 +32,7 @@ exports.signin = (req, res) => {
     }
 
     if (!user) {
-      return res.status(404).send({ message: "User Not found." });
+      return res.status(401).send({ message: "Unauthorized." });
     }
 
     var passwordIsValid = bcrypt.compareSync(req.body.password, user.password);
