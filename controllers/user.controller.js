@@ -17,3 +17,24 @@ exports.getUserDetails = (req, res) => {
     });
   });
 };
+
+exports.getAllUsers = (req, res) => {
+  User.find({ _id: { $ne: req.userId } }).exec((err, users) => {
+    if (err) {
+      res.status(500).send({ message: err });
+      return;
+    }
+
+    const updatedUserData = [];
+    users.map((user) => {
+      const userData = {
+        id: user.id,
+        username: user.username,
+        email: user.email
+      };
+      updatedUserData.push(userData);
+    })
+
+    res.status(200).send(updatedUserData);
+  });
+};
