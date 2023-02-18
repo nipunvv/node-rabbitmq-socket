@@ -13,6 +13,7 @@ exports.getUserDetails = (req, res) => {
     res.status(200).send({
       id: user.id,
       username: user.username,
+      name: user.name,
       email: user.email,
     });
   });
@@ -30,6 +31,7 @@ exports.getAllUsers = (req, res) => {
       const userData = {
         id: user.id,
         username: user.username,
+        name: user.name,
         email: user.email
       };
       updatedUserData.push(userData);
