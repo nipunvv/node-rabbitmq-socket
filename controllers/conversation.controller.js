@@ -20,33 +20,54 @@ exports.getAllConversations = (req, res) => {
       },
     },
     { $unset: ["from.password", "to.password", "from.__v", "to.__v", "__v"] },
-  ]).exec(
-    (err, conversations) => {
-      if (err) {
-        res.status(500).send({ message: err });
-        return;
-      }
-
-      res.status(200).send(conversations);
-    }
-  );
-};
-
-exports.createConversation = (req, res) => {
-  const conversation = new Conversation({
-    from: req.userId,
-    to: req.body.to,
-    testId: req.userId,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  });
-
-  conversation.save((err, _) => {
+    { $unwind: "$from" },
+    { $unwind: "$to" },
+  ]).exec((err, conversations) => {
     if (err) {
       res.status(500).send({ message: err });
       return;
     }
 
-    res.status(201).send({ message: "Conversation created successfully!" });
+    res.status(200).send(conversations);
   });
+};
+
+exports.createConversation = (req, res) => {
+  Conversation.findOne({
+    from: req.userId,
+    to: req.body.to,
+  }).exec((err, data) => {
+    if (err) {
+      res.status(500).send({ message: err });
+      return;
+    }
+
+    if (!data) {
+      const conversation = new Conversation({
+        from: req.userId,
+        to: req.body.to,
+        testId: req.userId,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
+    
+      conversation.save((err, conversation) => {
+        if (err) {
+          res.status(500).send({ message: err });
+          return;
+        }
+    
+        res.status(201).send({
+          id: conversation.id,
+          message: "Conversation created successfully!",
+        });
+      });
+    } else {
+      res.status(201).send({
+        id: data.id,
+        message: "Conversation created successfully!",
+      });
+    }
+  })
+  
 };
